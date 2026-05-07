@@ -7,6 +7,13 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!--
+    La interfaz tiene dos pantallas mutuamente excluyentes:
+      · #start-screen  — visible al cargar la página
+      · #game-screen   — visible durante la partida
+
+    La clase .hidden alterna entre ellas desde game.js.
+  -->
   <main>
     <section id="start-screen">
       <h1>Super Tic Tac Toe</h1>
@@ -15,18 +22,31 @@
 
     <section id="game-screen" class="hidden">
       <p id="turn-indicator"></p>
+
+      <!--
+        #board no contiene celdas en el markup: game.js las genera
+        programáticamente e inserta antes de #result-overlay.
+      -->
       <div id="board">
         <div id="result-overlay" class="hidden">
           <p id="winner-text"></p>
           <div class="btn-row">
             <button class="btn btn--green" id="btn-new-game">Nuevo juego</button>
-            <button class="btn btn--red" id="btn-exit">Volver al inicio</button>
+            <button class="btn btn--red"   id="btn-exit">Volver al inicio</button>
           </div>
         </div>
       </div>
     </section>
   </main>
 
+  <!--
+    type="module" tiene dos efectos clave:
+      · El script se ejecuta diferido (equivalente a defer), por lo que el
+        DOM ya está listo cuando el código corre — sin necesidad de
+        DOMContentLoaded.
+      · Las variables declaradas en game.js son privadas al módulo y no
+        contaminan el scope global.
+  -->
   <script type="module" src="game.js"></script>
 </body>
 </html>

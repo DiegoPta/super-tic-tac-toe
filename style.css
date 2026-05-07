@@ -1,3 +1,13 @@
+/*
+ * style.css — Super Tic Tac Toe
+ *
+ * El tablero es un contenedor de 600×600 px con posición relativa.
+ * Las celdas se ubican con coordenadas absolutas que replican exactamente
+ * las del tablero original en Pygame. La responsividad se logra escalando
+ * el contenedor entero desde JS (transform: scale), sin alterar ninguna
+ * coordenada.
+ */
+
 :root {
   --color-bg:          #1a1a2e;
   --color-green:       rgb(45, 140, 60);
@@ -23,6 +33,11 @@ body {
   overflow: hidden;
 }
 
+/*
+ * display: contents hace que <main> sea transparente al layout: sus hijos
+ * se comportan como hijos directos del flex container (body), sin generar
+ * una caja propia.
+ */
 main {
   display: contents;
 }
@@ -66,8 +81,15 @@ main {
   height: var(--board-size);
   position: relative;
   background: url('assets/bg.png') no-repeat 0 0 / 100% 100%;
+  /*
+   * transform-origin: top center garantiza que al escalar el tablero en
+   * pantallas pequeñas el borde superior quede anclado y el contenido
+   * descienda hacia abajo (en lugar de escalar desde el centro).
+   */
   transform-origin: top center;
 }
+
+/* ── Celdas ───────────────────────────────────────────────────────────── */
 
 .cell {
   position: absolute;
@@ -76,6 +98,16 @@ main {
   cursor: pointer;
 }
 
+/*
+ * Coordenadas derivadas del tablero original en Pygame:
+ *   coordinates = [
+ *     [(70, 80),  (235, 80),  (400, 80) ],
+ *     [(70, 235), (235, 235), (400, 235)],
+ *     [(70, 390), (235, 390), (400, 390)],
+ *   ]
+ * El ancho de cada celda (160 px) y el alto (155 px) cubren el área
+ * clickeable sin solaparse con las celdas adyacentes.
+ */
 .cell[data-row="0"][data-col="0"] { left: 70px;  top: 80px; }
 .cell[data-row="0"][data-col="1"] { left: 235px; top: 80px; }
 .cell[data-row="0"][data-col="2"] { left: 400px; top: 80px; }
@@ -96,14 +128,24 @@ main {
   pointer-events: none;
 }
 
+/* Dimensiones originales de los assets escalados en Pygame */
 .piece--cross  { width: 135px; height: 135px; }
 .piece--circle { width: 145px; height: 145px; }
 
-/* Pieza más antigua cuando el jugador ya tiene MAX_PIECES: alpha ≈ 39% */
+/*
+ * Pieza "en riesgo": la más antigua de un jugador cuando ya tiene
+ * MAX_PIECES piezas en el tablero. Se muestra semitransparente para
+ * advertir que será eliminada en el próximo turno.
+ * Opacity 0.39 ≈ alpha 100/255 del original en Pygame.
+ */
 .piece--at-risk { opacity: 0.39; }
 
 /* ── Overlay de resultado ─────────────────────────────────────────────── */
 
+/*
+ * Posición y dimensiones equivalen al Rect(100, 185, 400, 230) de Pygame:
+ * left=100, top=185, width=400, height=230.
+ */
 #result-overlay {
   position: absolute;
   left: 100px;
@@ -132,6 +174,10 @@ main {
 
 /* ── Botones ──────────────────────────────────────────────────────────── */
 
+/*
+ * .btn es la base compartida. Los modificadores definen color (.btn--green,
+ * .btn--red) y tamaño (.btn--play para el botón de inicio).
+ */
 .btn {
   width: 160px;
   height: 52px;
@@ -157,4 +203,9 @@ main {
 
 /* ── Utilidad ─────────────────────────────────────────────────────────── */
 
+/*
+ * !important es intencional: .hidden es una clase utilitaria que debe
+ * imponerse sobre cualquier valor de display definido en selectores de ID
+ * o clase (#result-overlay, #game-screen, etc.).
+ */
 .hidden { display: none !important; }
