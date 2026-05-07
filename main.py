@@ -1,6 +1,7 @@
 """Juego de tic tac toe con interfaz gráfica en Pygame."""
 
 import random
+from collections import deque
 
 import pygame
 
@@ -30,6 +31,11 @@ board: list[list[str]] = [
     ["", "", ""],
 ]
 
+MAX_PIECES = 3
+
+x_moves: deque[tuple[int, int]] = deque()
+o_moves: deque[tuple[int, int]] = deque()
+
 turn = random.choice(["X", "O"])
 winner: str | None = None
 game_over = False
@@ -55,14 +61,31 @@ def draw_turn_indicator(current_turn: str) -> None:
 
 
 def draw_board() -> None:
-    """Renderiza el fondo y las piezas del tablero."""
+    """Renderiza el fondo y las piezas del tablero.
+
+    Las piezas en riesgo de eliminación (las más antiguas cuando el jugador
+    ya tiene MAX_PIECES piezas) se renderizan semitransparentes.
+    """
     screen.blit(bg, (0, 0))
+
+    at_risk: set[tuple[int, int]] = set()
+    if len(x_moves) == MAX_PIECES:
+        at_risk.add(x_moves[0])
+    if len(o_moves) == MAX_PIECES:
+        at_risk.add(o_moves[0])
+
     for x in range(len(board)):
         for y in range(len(board[x])):
             if board[x][y] == "X":
-                screen.blit(cross, coordinates[x][y])
+                img = cross.copy()
+                if (x, y) in at_risk:
+                    img.set_alpha(100)
+                screen.blit(img, coordinates[x][y])
             elif board[x][y] == "O":
-                screen.blit(circle, coordinates[x][y])
+                img = circle.copy()
+                if (x, y) in at_risk:
+                    img.set_alpha(100)
+                screen.blit(img, coordinates[x][y])
 
 
 def draw_result_overlay(player: str) -> None:
@@ -115,6 +138,8 @@ def reset_game() -> None:
     board = [["", "", ""], ["", "", ""], ["", "", ""]]
     turn = random.choice(["X", "O"])
     winner = None
+    x_moves.clear()
+    o_moves.clear()
 
 
 while not game_over:
@@ -134,6 +159,11 @@ while not game_over:
                 row = (pos_y - 80) // 150
                 if board[row][col] == "":
                     board[row][col] = turn
+                    queue = x_moves if turn == "X" else o_moves
+                    queue.append((row, col))
+                    if len(queue) > MAX_PIECES:
+                        oldest_row, oldest_col = queue.popleft()
+                        board[oldest_row][oldest_col] = ""
                     winner = check_winner()
                     if not winner:
                         turn = "O" if turn == "X" else "X"
