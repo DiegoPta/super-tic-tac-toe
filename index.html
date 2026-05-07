@@ -40,13 +40,11 @@
   </main>
 
   <!--
-    type="module" tiene dos efectos clave:
-      · El script se ejecuta diferido (equivalente a defer), por lo que el
-        DOM ya está listo cuando el código corre — sin necesidad de
-        DOMContentLoaded.
-      · Las variables declaradas en game.js son privadas al módulo y no
-        contaminan el scope global.
+    Sin type="module" para compatibilidad con file:// (apertura directa en
+    el navegador sin servidor). El aislamiento de scope se logra con una
+    IIFE dentro de game.js. El script va al final del body, por lo que el
+    DOM ya está completamente parseado cuando se ejecuta.
   -->
-  <script type="module" src="game.js"></script>
+  <script src="game.js"></script>
 </body>
 </html>
