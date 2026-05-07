@@ -1,10 +1,33 @@
 const MAX_PIECES = 3;
+const BOARD_SIZE  = 600;
 
-let board;
-let xMoves;
-let oMoves;
-let turn;
-let winner;
+// DOM references
+const startScreen   = document.getElementById('start-screen');
+const gameScreen    = document.getElementById('game-screen');
+const boardEl       = document.getElementById('board');
+const turnIndicator = document.getElementById('turn-indicator');
+const resultOverlay = document.getElementById('result-overlay');
+const winnerText    = document.getElementById('winner-text');
+
+// Game state
+let board, xMoves, oMoves, turn, winner;
+
+// Generate the 9 cells and wire click handlers before the overlay node
+const cells = Array.from({ length: 9 }, (_, i) => {
+  const row  = Math.floor(i / 3);
+  const col  = i % 3;
+  const cell = document.createElement('div');
+  cell.className    = 'cell';
+  cell.dataset.row  = row;
+  cell.dataset.col  = col;
+  cell.addEventListener('click', () => onCellClick(row, col));
+  boardEl.insertBefore(cell, resultOverlay);
+  return cell;
+});
+
+function getCell(row, col) {
+  return cells[row * 3 + col];
+}
 
 function checkWinner() {
   for (let r = 0; r < 3; r++) {
@@ -24,106 +47,82 @@ function checkWinner() {
 
 function renderBoard() {
   const atRisk = new Set();
-  if (xMoves.length === MAX_PIECES) atRisk.add(xMoves[0].toString());
-  if (oMoves.length === MAX_PIECES) atRisk.add(oMoves[0].toString());
+  if (xMoves.length === MAX_PIECES) atRisk.add(`${xMoves[0][0]},${xMoves[0][1]}`);
+  if (oMoves.length === MAX_PIECES) atRisk.add(`${oMoves[0][0]},${oMoves[0][1]}`);
 
-  document.querySelectorAll('.cell').forEach(cell => {
-    const row = parseInt(cell.dataset.row);
-    const col = parseInt(cell.dataset.col);
-    cell.innerHTML = '';
+  for (let r = 0; r < 3; r++) {
+    for (let c = 0; c < 3; c++) {
+      const cell  = getCell(r, c);
+      cell.innerHTML = '';
+      const piece = board[r][c];
+      if (!piece) continue;
 
-    const piece = board[row][col];
-    if (piece !== '') {
-      const img = document.createElement('img');
-      img.src = piece === 'X' ? 'assets/cross.png' : 'assets/circle.png';
-      img.className = piece === 'X' ? 'cross' : 'circle';
-      if (atRisk.has([row, col].toString())) {
-        img.classList.add('at-risk');
-      }
+      const img     = document.createElement('img');
+      img.src       = `assets/${piece === 'X' ? 'cross' : 'circle'}.png`;
+      img.alt       = piece;
+      img.className = `piece piece--${piece === 'X' ? 'cross' : 'circle'}`;
+      if (atRisk.has(`${r},${c}`)) img.classList.add('piece--at-risk');
       cell.appendChild(img);
     }
-  });
+  }
 }
 
-function updateTurnIndicator() {
-  document.getElementById('turn-indicator').textContent = `Turno: ${turn}`;
-}
-
-function showOverlay(player) {
-  document.getElementById('winner-text').textContent = `¡${player} ganó!`;
-  document.getElementById('result-overlay').classList.remove('hidden');
-}
-
-function resetGame() {
-  board = [['', '', ''], ['', '', ''], ['', '', '']];
-  xMoves = [];
-  oMoves = [];
-  winner = null;
-  turn = Math.random() < 0.5 ? 'X' : 'O';
-  document.getElementById('result-overlay').classList.add('hidden');
-  renderBoard();
-  updateTurnIndicator();
-}
-
-function handleCellClick(row, col) {
-  if (board[row][col] !== '') return;
+function onCellClick(row, col) {
+  if (winner || board[row][col]) return;
 
   board[row][col] = turn;
   const queue = turn === 'X' ? xMoves : oMoves;
   queue.push([row, col]);
 
   if (queue.length > MAX_PIECES) {
-    const [oldRow, oldCol] = queue.shift();
-    board[oldRow][oldCol] = '';
+    const [r, c] = queue.shift();
+    board[r][c] = '';
   }
 
   winner = checkWinner();
-  if (!winner) {
-    turn = turn === 'X' ? 'O' : 'X';
-  }
+  if (!winner) turn = turn === 'X' ? 'O' : 'X';
 
   renderBoard();
 
   if (winner) {
-    showOverlay(winner);
+    winnerText.textContent = `¡${winner} ganó!`;
+    resultOverlay.classList.remove('hidden');
   } else {
-    updateTurnIndicator();
+    turnIndicator.textContent = `Turno: ${turn}`;
   }
 }
 
-function startGame() {
-  document.getElementById('start-screen').classList.add('hidden');
-  document.getElementById('turn-indicator').classList.remove('hidden');
-  document.getElementById('board-wrapper').classList.remove('hidden');
+function resetGame() {
+  board  = Array.from({ length: 3 }, () => ['', '', '']);
+  xMoves = [];
+  oMoves = [];
+  winner = null;
+  turn   = Math.random() < 0.5 ? 'X' : 'O';
+
+  resultOverlay.classList.add('hidden');
+  renderBoard();
+  turnIndicator.textContent = `Turno: ${turn}`;
+}
+
+function scaleBoard() {
+  const available = Math.min(window.innerWidth, window.innerHeight) * 0.95;
+  const scale     = Math.min(1, available / BOARD_SIZE);
+  boardEl.style.transform = `scale(${scale})`;
+}
+
+function showGame() {
+  startScreen.classList.add('hidden');
+  gameScreen.classList.remove('hidden');
   resetGame();
   scaleBoard();
 }
 
-function handleExit() {
-  document.getElementById('board-wrapper').classList.add('hidden');
-  document.getElementById('turn-indicator').classList.add('hidden');
-  document.getElementById('start-screen').classList.remove('hidden');
+function showStart() {
+  gameScreen.classList.add('hidden');
+  startScreen.classList.remove('hidden');
 }
 
-function scaleBoard() {
-  const wrapper = document.getElementById('board-wrapper');
-  if (wrapper.classList.contains('hidden')) return;
-  const available = Math.min(window.innerWidth, window.innerHeight) * 0.95;
-  const scale = Math.min(1, available / 600);
-  wrapper.style.transform = `scale(${scale})`;
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('btn-play').addEventListener('click', startGame);
-  document.getElementById('btn-new-game').addEventListener('click', resetGame);
-  document.getElementById('btn-exit').addEventListener('click', handleExit);
-
-  document.querySelectorAll('.cell').forEach(cell => {
-    cell.addEventListener('click', () => {
-      if (winner) return;
-      handleCellClick(parseInt(cell.dataset.row), parseInt(cell.dataset.col));
-    });
-  });
-
-  window.addEventListener('resize', scaleBoard);
-});
+document.getElementById('btn-play').addEventListener('click', showGame);
+document.getElementById('btn-new-game').addEventListener('click', resetGame);
+document.getElementById('btn-exit').addEventListener('click', showStart);
+window.addEventListener('resize', scaleBoard);

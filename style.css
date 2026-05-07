@@ -1,3 +1,12 @@
+:root {
+  --color-bg:          #1a1a2e;
+  --color-green:       rgb(45, 140, 60);
+  --color-green-hover: rgb(55, 165, 72);
+  --color-red:         rgb(160, 45, 45);
+  --color-red-hover:   rgb(190, 55, 55);
+  --board-size:        600px;
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -5,9 +14,8 @@
 }
 
 body {
-  background: #1a1a2e;
+  background: var(--color-bg);
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
@@ -15,7 +23,12 @@ body {
   overflow: hidden;
 }
 
-/* Pantalla de inicio */
+main {
+  display: contents;
+}
+
+/* ── Pantalla de inicio ───────────────────────────────────────────────── */
+
 #start-screen {
   display: flex;
   flex-direction: column;
@@ -30,44 +43,32 @@ body {
   text-align: center;
 }
 
-#btn-play {
-  width: 200px;
-  height: 60px;
-  background: rgb(45, 140, 60);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-size: 28px;
-  font-family: Arial, sans-serif;
-  cursor: pointer;
+/* ── Pantalla de juego ────────────────────────────────────────────────── */
+
+#game-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-#btn-play:hover {
-  background: rgb(55, 165, 72);
-}
-
-/* Indicador de turno */
 #turn-indicator {
   color: #fff;
   font-size: 30px;
   height: 40px;
   line-height: 40px;
   margin-bottom: 8px;
-  text-align: center;
 }
 
-/* Tablero */
-#board-wrapper {
-  width: 600px;
-  height: 600px;
+/* ── Tablero ──────────────────────────────────────────────────────────── */
+
+#board {
+  width: var(--board-size);
+  height: var(--board-size);
   position: relative;
-  background-image: url('assets/bg.png');
-  background-size: 600px 600px;
-  background-repeat: no-repeat;
+  background: url('assets/bg.png') no-repeat 0 0 / 100% 100%;
   transform-origin: top center;
 }
 
-/* Celdas clickeables posicionadas sobre el tablero */
 .cell {
   position: absolute;
   width: 160px;
@@ -85,8 +86,9 @@ body {
 .cell[data-row="2"][data-col="1"] { left: 235px; top: 390px; }
 .cell[data-row="2"][data-col="2"] { left: 400px; top: 390px; }
 
-/* Piezas dentro de cada celda */
-.cell img {
+/* ── Piezas ───────────────────────────────────────────────────────────── */
+
+.piece {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -94,13 +96,14 @@ body {
   pointer-events: none;
 }
 
-.cell img.cross  { width: 135px; height: 135px; }
-.cell img.circle { width: 145px; height: 145px; }
+.piece--cross  { width: 135px; height: 135px; }
+.piece--circle { width: 145px; height: 145px; }
 
-/* Pieza en riesgo de eliminación: alpha=100/255 ≈ 39% */
-.cell img.at-risk { opacity: 0.39; }
+/* Pieza más antigua cuando el jugador ya tiene MAX_PIECES: alpha ≈ 39% */
+.piece--at-risk { opacity: 0.39; }
 
-/* Overlay de resultado: equivale a Rect(100,185,400,230) de Pygame */
+/* ── Overlay de resultado ─────────────────────────────────────────────── */
+
 #result-overlay {
   position: absolute;
   left: 100px;
@@ -127,22 +130,31 @@ body {
   gap: 30px;
 }
 
-#btn-new-game,
-#btn-exit {
+/* ── Botones ──────────────────────────────────────────────────────────── */
+
+.btn {
   width: 160px;
   height: 52px;
   border: none;
   border-radius: 8px;
   font-size: 22px;
-  font-family: Arial, sans-serif;
+  font-family: inherit;
   color: #fff;
   cursor: pointer;
+  transition: background 0.15s;
 }
 
-#btn-new-game { background: rgb(45, 140, 60); }
-#btn-exit     { background: rgb(160, 45, 45); }
+.btn--play {
+  width: 200px;
+  height: 60px;
+  font-size: 28px;
+}
 
-#btn-new-game:hover { background: rgb(55, 165, 72); }
-#btn-exit:hover     { background: rgb(190, 55, 55); }
+.btn--green       { background: var(--color-green); }
+.btn--green:hover { background: var(--color-green-hover); }
+.btn--red         { background: var(--color-red); }
+.btn--red:hover   { background: var(--color-red-hover); }
+
+/* ── Utilidad ─────────────────────────────────────────────────────────── */
 
 .hidden { display: none !important; }

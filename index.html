@@ -7,34 +7,26 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <main>
+    <section id="start-screen">
+      <h1>Super Tic Tac Toe</h1>
+      <button class="btn btn--green btn--play" id="btn-play">Jugar</button>
+    </section>
 
-  <div id="start-screen">
-    <h1>Super Tic Tac Toe</h1>
-    <button id="btn-play">Jugar</button>
-  </div>
-
-  <div id="turn-indicator" class="hidden">Turno: X</div>
-
-  <div id="board-wrapper" class="hidden">
-    <div class="cell" data-row="0" data-col="0"></div>
-    <div class="cell" data-row="0" data-col="1"></div>
-    <div class="cell" data-row="0" data-col="2"></div>
-    <div class="cell" data-row="1" data-col="0"></div>
-    <div class="cell" data-row="1" data-col="1"></div>
-    <div class="cell" data-row="1" data-col="2"></div>
-    <div class="cell" data-row="2" data-col="0"></div>
-    <div class="cell" data-row="2" data-col="1"></div>
-    <div class="cell" data-row="2" data-col="2"></div>
-
-    <div id="result-overlay" class="hidden">
-      <h1 id="winner-text"></h1>
-      <div class="btn-row">
-        <button id="btn-new-game">Nuevo juego</button>
-        <button id="btn-exit">Volver al inicio</button>
+    <section id="game-screen" class="hidden">
+      <p id="turn-indicator"></p>
+      <div id="board">
+        <div id="result-overlay" class="hidden">
+          <p id="winner-text"></p>
+          <div class="btn-row">
+            <button class="btn btn--green" id="btn-new-game">Nuevo juego</button>
+            <button class="btn btn--red" id="btn-exit">Volver al inicio</button>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
+    </section>
+  </main>
 
-  <script src="game.js"></script>
+  <script type="module" src="game.js"></script>
 </body>
 </html>
