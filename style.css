@@ -1,0 +1,148 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #1a1a2e;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+}
+
+/* Pantalla de inicio */
+#start-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+}
+
+#start-screen h1 {
+  color: #fff;
+  font-size: 48px;
+  font-weight: bold;
+  text-align: center;
+}
+
+#btn-play {
+  width: 200px;
+  height: 60px;
+  background: rgb(45, 140, 60);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 28px;
+  font-family: Arial, sans-serif;
+  cursor: pointer;
+}
+
+#btn-play:hover {
+  background: rgb(55, 165, 72);
+}
+
+/* Indicador de turno */
+#turn-indicator {
+  color: #fff;
+  font-size: 30px;
+  height: 40px;
+  line-height: 40px;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+/* Tablero */
+#board-wrapper {
+  width: 600px;
+  height: 600px;
+  position: relative;
+  background-image: url('assets/bg.png');
+  background-size: 600px 600px;
+  background-repeat: no-repeat;
+  transform-origin: top center;
+}
+
+/* Celdas clickeables posicionadas sobre el tablero */
+.cell {
+  position: absolute;
+  width: 160px;
+  height: 155px;
+  cursor: pointer;
+}
+
+.cell[data-row="0"][data-col="0"] { left: 70px;  top: 80px; }
+.cell[data-row="0"][data-col="1"] { left: 235px; top: 80px; }
+.cell[data-row="0"][data-col="2"] { left: 400px; top: 80px; }
+.cell[data-row="1"][data-col="0"] { left: 70px;  top: 235px; }
+.cell[data-row="1"][data-col="1"] { left: 235px; top: 235px; }
+.cell[data-row="1"][data-col="2"] { left: 400px; top: 235px; }
+.cell[data-row="2"][data-col="0"] { left: 70px;  top: 390px; }
+.cell[data-row="2"][data-col="1"] { left: 235px; top: 390px; }
+.cell[data-row="2"][data-col="2"] { left: 400px; top: 390px; }
+
+/* Piezas dentro de cada celda */
+.cell img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.cell img.cross  { width: 135px; height: 135px; }
+.cell img.circle { width: 145px; height: 145px; }
+
+/* Pieza en riesgo de eliminación: alpha=100/255 ≈ 39% */
+.cell img.at-risk { opacity: 0.39; }
+
+/* Overlay de resultado: equivale a Rect(100,185,400,230) de Pygame */
+#result-overlay {
+  position: absolute;
+  left: 100px;
+  top: 185px;
+  width: 400px;
+  height: 230px;
+  background: rgba(15, 15, 15, 0.82);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  border-radius: 4px;
+}
+
+#winner-text {
+  color: #fff;
+  font-size: 52px;
+  font-weight: bold;
+}
+
+.btn-row {
+  display: flex;
+  gap: 30px;
+}
+
+#btn-new-game,
+#btn-exit {
+  width: 160px;
+  height: 52px;
+  border: none;
+  border-radius: 8px;
+  font-size: 22px;
+  font-family: Arial, sans-serif;
+  color: #fff;
+  cursor: pointer;
+}
+
+#btn-new-game { background: rgb(45, 140, 60); }
+#btn-exit     { background: rgb(160, 45, 45); }
+
+#btn-new-game:hover { background: rgb(55, 165, 72); }
+#btn-exit:hover     { background: rgb(190, 55, 55); }
+
+.hidden { display: none !important; }

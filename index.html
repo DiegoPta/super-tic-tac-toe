@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Super Tic Tac Toe</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div id="start-screen">
+    <h1>Super Tic Tac Toe</h1>
+    <button id="btn-play">Jugar</button>
+  </div>
+
+  <div id="turn-indicator" class="hidden">Turno: X</div>
+
+  <div id="board-wrapper" class="hidden">
+    <div class="cell" data-row="0" data-col="0"></div>
+    <div class="cell" data-row="0" data-col="1"></div>
+    <div class="cell" data-row="0" data-col="2"></div>
+    <div class="cell" data-row="1" data-col="0"></div>
+    <div class="cell" data-row="1" data-col="1"></div>
+    <div class="cell" data-row="1" data-col="2"></div>
+    <div class="cell" data-row="2" data-col="0"></div>
+    <div class="cell" data-row="2" data-col="1"></div>
+    <div class="cell" data-row="2" data-col="2"></div>
+
+    <div id="result-overlay" class="hidden">
+      <h1 id="winner-text"></h1>
+      <div class="btn-row">
+        <button id="btn-new-game">Nuevo juego</button>
+        <button id="btn-exit">Volver al inicio</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
